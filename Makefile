@@ -70,7 +70,7 @@ $(TARGET) : $(OBJS)
 	@echo "LD $@"
 %.cpp.o : %.cpp
 	@$(CXX) $(CXXFLAGS) -c $^ -o $@
-	@echo "CPP $@"
+	@echo "CXX $@"
 %.c.o : %.c
 	@$(CC) $(CFLAGS) -c $^ -o $@
 	@echo "CC $@"
