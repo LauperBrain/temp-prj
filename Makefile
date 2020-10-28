@@ -13,7 +13,7 @@
 #
 TARGET     := main
 LIBDIR     :=
-LIBS       :=
+LIBS       := pthread
 INCLUDES   += .
 SRCDIR     := src
 #
@@ -24,7 +24,7 @@ CXX      := g++
 CFLAGS   := -g -Wall -O2
 CXXFLAGS := $(CFLAGS)
 CXXFLAGS += $(addprefix -I,$(INCLUDES))
-CXXFLAGS += -MMD
+CXXFLAGS += -MMD -std=c++11
 #
 # # The next bit checks to see whether rm is in your djgpp bin
 # # directory; if not it uses del instead, but this can cause (harmless)
