@@ -1,5 +1,6 @@
 #include <iostream>
 #include <random>
+#include "log.hpp"
 #include "thread_pool.hpp"
 
 std::random_device rd; // Real random producter
@@ -17,21 +18,21 @@ void multiply(const int a, const int b)
 {
     simulate_hard_computation();
     const int res = a * b;
-    std::cout << a << " * " << b << " = " << res << std::endl;
+    LOGD("%d * %d = %d", a, b, res);
 }
 
 void multiply_output(int &out, const int a, const int b)
 {
     simulate_hard_computation();
     out = a * b;
-    std::cout << a << " * " << b << " = " << out << std::endl;
+    LOGD("%d * %d = %d", a, b, out);
 }
 
 int multiply_return(const int a, const int b)
 {
     simulate_hard_computation();
     const int res = a * b;
-    std::cout << a << " * " << b << " = " << res << std::endl;
+    LOGD("%d * %d = %d", a, b, res);
     return res;
 }
 
@@ -43,27 +44,22 @@ void example()
     // 提交乘法操作，总共30个。
     for (int i = 1; i <= 3; ++i) {
         for (int j = 1; j <= 10; ++j) {
-            std::cout << "提交" << i << "*" << j << std::endl;
             pool.submit(multiply, i, j);
         }
     }
 
-    std::cout << "提交" << 5 << "*" << 6 << std::endl;
     // 使用ref传递的输出参数提交函数
     int output_ref = 0;
     auto future1 = pool.submit(multiply_output, std::ref(output_ref), 5, 6);
-    std::cout << "提交" << 5 << "*" << 6 << "完成"<< std::endl;
     // 等待乘法输出完成
     future1.get();
-    std::cout << "Last operation result is equals to " << output_ref << std::endl;
+    LOGD("Last operation result is equals to %d.", output_ref);
 
     // 使用return 参数提交函数
-    std::cout << "提交" << 5 << "*" << 3 << std::endl;
     auto future2 = pool.submit(multiply_return, 5, 3);
-    std::cout << "提交" << 5 << "*" << 3 << "完成"<< std::endl;
     // 等待乘法输出完成
     int res = future2.get();
-    std::cout << "Last operation result is equals to " << res << std::endl;
+    LOGD("Last operation result is equals to %d.", res);
 
     // 关闭线程池
     pool.shutdown();
@@ -77,17 +73,17 @@ void example_1()
     pool.initialize();
     auto worker = []{
         for (int i = 0; i < 10; ++i) {
-            std::cout << "worker, thread_id:" << std::this_thread::get_id() << std::endl;
+            LOGD("worker thread...");
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
-        std::cout << "worker done.\n";
+        LOGD("worker done!");
     };
     pool.submit(worker);
     pool.submit(worker);
     pool.submit(worker);
     pool.submit(worker);
     while (1) {
-        std::cout << "main, thread_id:" << std::this_thread::get_id() << std::endl;
+        LOGD("main thread..");
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
     pool.shutdown();
@@ -147,10 +143,16 @@ void example_condition_var()
 int main(int argc, char **argv)
 {
     std::cout << "hello, world" << std::endl; 
+    LOG_NAME("demo");
+    //LOG_SYS(true);
+    LOGD("hello, world\n");
+    LOGE("hello, world\n");
+    LOGW("hello, world\n");
+    LOGI("hello, world\n");
+    LOGD("hello, world\n");
     int number_of_threads = std::thread::hardware_concurrency();
     std::cout << "max number of threads:" << number_of_threads << std::endl;
     example_1();
     //example_condition_var();
     return EXIT_SUCCESS;
 }
-
