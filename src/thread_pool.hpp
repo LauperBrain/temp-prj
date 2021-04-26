@@ -13,18 +13,19 @@
 class ThreadPool
 {
 public:
-    ThreadPool(const int max_number_of_threads) : threads_(std::vector<std::thread>(max_number_of_threads)) { }
+    ThreadPool(const int max_number_of_threads) : threads_(std::vector<std::thread>(max_number_of_threads))
+    { }
 
     void initialize()
     {
         for (size_t i = 0; i < threads_.size(); ++i) {
             threads_.at(i) = std::thread(Worker(this, i));
-        } 
+        }
     }
 
     void shutdown()
     {
-        shutdown_ = true; 
+        shutdown_ = true;
         conditional_lock_.notify_all(); // Wakeup all worker.
         for (size_t i = 0; i < threads_.size(); ++i) {
             if (threads_.at(i).joinable())
@@ -32,11 +33,11 @@ public:
         }
     }
 
-    template<typename FUNCTION, typename...Args>
-    auto submit(FUNCTION &&f, Args&&... args) -> std::future<decltype(f(args...))>
+    template<typename Function, typename...Args>
+    auto submit(Function &&f, Args&&... args) -> std::future<decltype(f(args...))>
     {
         // Create a function with bounded parameters ready to execute.
-        std::function<decltype(f(args...))()> func = std::bind(std::forward<FUNCTION>(f), std::forward<Args>(args)...);
+        std::function<decltype(f(args...))()> func = std::bind(std::forward<Function>(f), std::forward<Args>(args)...);
 
         // Encapsulate it into a shared ptr in order to be able to copy construct
         auto task_ptr = std::make_shared<std::packaged_task<decltype(f(args ...))()>>(func);
@@ -45,7 +46,7 @@ public:
         std::function<void()> wrapper_func = [task_ptr]() { (*task_ptr)(); };
 
         queue_.enqueue(wrapper_func);
-        
+
         // Weakup a thread whitch was waitting.
         conditional_lock_.notify_one();
 
@@ -63,12 +64,13 @@ private:
     class Worker
     {
         public:
-            Worker(ThreadPool *pool, const int id):id_(id), pool_(pool) { }
+            Worker(ThreadPool *pool, const int id):id_(id), pool_(pool)
+            { }
 
             //overload operator '()'
             void operator()()
             {
-                std::function<void()> func;    
+                std::function<void()> func;
                 bool dequeued;
 
                 // If the thread pool is not shutdown, repeat get task.

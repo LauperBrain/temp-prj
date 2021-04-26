@@ -1,2 +1,3 @@
-# temp-prj
-this is a template Makefile for some projects
+# Thread Pool
+
+A thread pool that implmentd by c++11

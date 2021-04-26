@@ -50,12 +50,10 @@ deps : $(DEPS)
 
 objs : $(OBJS)
 
-clean :
-	@$(RM-F) $(OBJS)
-	@$(RM-F) $(DEPS) 
-
-distclean : clean
-	@$(RM-F) $(TARGET)
+clean distclean :
+	$(RM-F) $(OBJS)
+	$(RM-F) $(DEPS) 
+	$(RM-F) $(TARGET)
 
 rebuild : distclean all
 
