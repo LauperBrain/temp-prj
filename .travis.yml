@@ -1,0 +1,24 @@
+language: cpp
+sudo: required
+dist: bionic
+compiler:
+- clang
+- gcc
+os:
+- linux
+ruby: 2.2.0
+before_install:
+- echo $LANG
+- echo $LC_ALL
+branches:
+  only:
+  - master
+
+notifications:
+  email: false
+  irc:
+    channels:
+    - chat.freenode.net#rubinius
+    template:
+    - "%{repository}/%{branch} (%{commit} - %{author}): %{message}"
+
