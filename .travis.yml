@@ -2,23 +2,25 @@ language: cpp
 sudo: required
 dist: bionic
 compiler:
-- clang
-- gcc
+  - clang
+  - gcc
 os:
-- linux
-ruby: 2.2.0
+  - linux
+
 before_install:
-- echo $LANG
-- echo $LC_ALL
+  - echo $LANG
+  - echo $LC_ALL
+  - sudo apt-get update
+  - sudo apt-get install -y yasm
+  - sudo apt-get install -y libsdl2-dev
+  - wget "https://github.com/Kitware/CMake/releases/download/v3.16.2/cmake-3.16.2-Linux-x86_64.tar.gz"
+  - tar xzf cmake-3.16.2-Linux-x86_64.tar.gz
+  - export PATH=`pwd`/cmake-3.16.2-Linux-x86_64/bin/:$PATH
+
+
+script:
+  - make
+
 branches:
   only:
   - master
-
-notifications:
-  email: false
-  irc:
-    channels:
-    - chat.freenode.net#rubinius
-    template:
-    - "%{repository}/%{branch} (%{commit} - %{author}): %{message}"
-
